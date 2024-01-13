@@ -5,12 +5,14 @@
 
 from PIL import Image, ImageOps, ImageFilter, ImageEnhance, ImageDraw, ImageFont
 import os
+import debug_config as debug
 from random import randint
 import requests
 from datetime import datetime
 from time import sleep
 from pytz import timezone
-from instagrapi import Client as cl
+from instauto.api.client import ApiClient
+import instauto.helpers.post as post
 
 try:
     import config
@@ -29,12 +31,14 @@ except:
         except Exception as e:
             print(f"Couldn't write to config file: {e}")
 
-try:
-    cl.login(username, password)
-except Exception as e:
-    print(f"Couldn't log in: {e}")
-else:
-    print(f"Logged in as {username}")
+if debug.skip_ig != True:
+    try:
+        client = ApiClient(username=username, password=password)
+        client.log_in()
+    except Exception as e:
+        print(f"Couldn't log in: {e}")
+    else:
+        print(f"Logged in as {username}")
 
 bg = Image.open("assets/bg.png")
 bg2_files = []
@@ -151,29 +155,35 @@ def check_time():
     else:
         return False
 
-while True:
-    if check_time():
-        response = requests.get("https://svatkyapi.cz/api/day").json()
-        svatek = response["name"]
-        day_number = response["dayNumber"]
-        day_week = response["dayInWeek"]
-        month = response["month"]["genitive"]
+def img_save_post():
+    response = requests.get("https://svatkyapi.cz/api/day").json()
+    svatek = response["name"]
+    day_number = response["dayNumber"]
+    day_week = response["dayInWeek"]
+    day_week = day_week.capitalize()
+    month = response["month"]["genitive"]
 
-        text = [("Svátek má", text_font, 10),
-        (svatek, name_font, 50),
-        (f"{day_week} {day_number}. {month}", date_font, 0)]
+    text = [("Svátek má", text_font, 10),
+    (svatek, name_font, 40),
+    (f"{day_week} {day_number}. {month}", date_font, 0)]
 
-        generated_img = img_gen(text)
-        generated_img = generated_img.convert("RGB")
-        generated_img.save(fp="current_img.jpg")
-        
+    generated_img = img_gen(text)
+    generated_img = generated_img.convert("RGB")
+    generated_img.save(fp="current_img.jpg")
+    if debug.use_show: generated_img.show()
+    
+    if debug.skip_ig != True:
         try:
-            cl.photo_upload_to_story("current_img.jpg")
+            post.upload_image_to_story(client, "current_img.jpg")
         except Exception as e:
             print(f"Couldn't upload story: {e}")
         else:
             print("New story uploaded succesfully")
-        
 
-    sleep(3600)#1 hour
-
+if debug.skip_sleep == True:
+    img_save_post()
+else:
+    while True:
+        if check_time():
+            img_save_post()
+        sleep(3600)#1 hour
