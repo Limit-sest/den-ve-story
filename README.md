@@ -3,9 +3,12 @@
 
 Používám [instauto](https://github.com/stanvanrooy/instauto) pro nahrání story, [Pillow](https://github.com/python-pillow/Pillow) pro generování obrázku a k získání svátků a dat používám [svátky API](https://svatkyapi.cz/).
 ## Jak začít?
-Je to jednoduché. Nejprve je potřeba si stáhnout kód, např. pomocí:
+Je to jednoduché. Nejprve je potřeba si stáhnout kód a pak různé knihovny
 ```
 git clone https://github.com/Limit-sest/den-v-biu
+```
+```
+pip install -r requirements.txt
 ```
 Program funguje tak že zkombinuje 2 obrázky - Pozadí a 1 náhodný z `/assets/bg2`. Výsledek bude vypadat nějak takto:
 
