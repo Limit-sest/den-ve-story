@@ -5,7 +5,7 @@
 
 from PIL import Image, ImageOps, ImageFilter, ImageEnhance, ImageDraw, ImageFont
 import os
-import debug_config as debug
+import config
 from random import randint
 import requests
 from datetime import datetime
@@ -15,23 +15,23 @@ from instauto.api.client import ApiClient
 import instauto.helpers.post as post
 
 try:
-    import config
-    username = config.username
-    password = config.password
+    import login_save
+    username = login_save.username
+    password = login_save.password
 except:
     username = input("Please enter your username: ")
     password = input("Please enter your password: ")
     save_ask = input("Would you like to save your credentials? (y/n): ")
     if save_ask == "y" or "Y":
         try:
-            f = open("config.py", "w")
+            f = open("login.py", "w")
             f.write(f'username = "{username}"\n')
             f.write(f'password = "{password}"\n')
             f.close()
         except Exception as e:
-            print(f"Couldn't write to config file: {e}")
+            print(f"Couldn't write to login file: {e}")
 
-if debug.skip_ig != True:
+if config.skip_ig != True:
     try:
         client = ApiClient(username=username, password=password)
         client.log_in()
@@ -170,17 +170,18 @@ def img_save_post():
     generated_img = img_gen(text)
     generated_img = generated_img.convert("RGB")
     generated_img.save(fp="current_img.jpg")
-    if debug.use_show: generated_img.show()
+    if config.use_show: generated_img.show()
     
-    if debug.skip_ig != True:
+    if config.skip_ig != True:
         try:
+            if config.random_delay: sleep(randint(config.random_delay_range[0], config.random_delay_range[1]))
             post.upload_image_to_story(client, "current_img.jpg")
         except Exception as e:
             print(f"Couldn't upload story: {e}")
         else:
             print("New story uploaded succesfully")
 
-if debug.skip_sleep == True:
+if config.skip_sleep:
     img_save_post()
 else:
     while True:
