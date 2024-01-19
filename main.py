@@ -22,7 +22,7 @@ except:
     username = input("Please enter your username: ")
     password = input("Please enter your password: ")
     save_ask = input("Would you like to save your credentials? (y/n): ")
-    if save_ask == "y" or "Y":
+    if save_ask.lower() == "y":
         try:
             f = open("login_save.py", "w")
             f.write(f'username = "{username}"\n')
@@ -30,6 +30,8 @@ except:
             f.close()
         except Exception as e:
             print(f"Couldn't write to login file: {e}")
+        else:
+            print("Succesfully saved username & pasword")
 
 if config.skip_ig != True:
     try:
