@@ -24,7 +24,7 @@ except:
     save_ask = input("Would you like to save your credentials? (y/n): ")
     if save_ask == "y" or "Y":
         try:
-            f = open("login.py", "w")
+            f = open("login_save.py", "w")
             f.write(f'username = "{username}"\n')
             f.write(f'password = "{password}"\n')
             f.close()
