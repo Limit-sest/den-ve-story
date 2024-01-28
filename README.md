@@ -1,4 +1,4 @@
-<img src="./repo_assets/Cover img.png" alt="Cover image" style="height: 400px; border-radius: 1.5rem;"/>
+<img src="./repo_assets/Cover img.png" alt="Cover image" style="height: 400px;"/>
 
 # Dnes je... v Instagram Story
 > Program který každý den postne story obsahující den a svátek.
