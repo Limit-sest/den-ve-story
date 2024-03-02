@@ -14,19 +14,25 @@ from pytz import timezone
 from instagrapi import Client
 
 cl = Client()
+sessionID = None
 try:
     import login_save
     username = login_save.username
     password = login_save.password
+    sessionID = login_save.sessionID
 except:
     username = input("Please enter your username: ")
     password = input("Please enter your password: ")
+    sessionID_ask = input("Would you like to login with sessionID? (y/n):")
+    if sessionID_ask.lower() == "y":
+        sessionID = input("Please enter your sessionID:")
     save_ask = input("Would you like to save your credentials? (y/n): ")
     if save_ask.lower() == "y":
         try:
             f = open("login_save.py", "w")
             f.write(f'username = "{username}"\n')
             f.write(f'password = "{password}"\n')
+            f.write(f'sessionID = "{sessionID}"\n')
             f.close()
         except Exception as e:
             print(f"Couldn't write to login file: {e}")
@@ -35,11 +41,24 @@ except:
 
 if config.skip_ig != True:
     try:
-        cl.login(username, password)
+        if sessionID:
+            print("Trying to log in using sessionID")
+            if cl.login_by_sessionid(sessionID):
+                print(f"Logged in as {username}")
+            else:
+                print(f"Couldn't log in (using sessionID): Unknown")
+        else:
+            raise Exception("No sessionID provided.")
     except Exception as e:
-        print(f"Couldn't log in: {e}")
-    else:
-        print(f"Logged in as {username}")
+        print(f"Couldn't log in (using sessionID): {e}")
+        try:
+            print("Trying to log in using username & password")
+            if cl.login(username, password):
+                print(f"Logged in as {username}")
+            else:
+                print(f"Couldn't log in (using username & password): Unknown")
+        except Exception as e:
+            print(f"Couldn't log in (using username & password): {e}")
 
 bg = Image.open("assets/bg.png")
 bg2_files = []
