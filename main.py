@@ -11,8 +11,9 @@ import requests
 from datetime import datetime
 from time import sleep
 from pytz import timezone
-from instagrapi import Client as cl
+from instagrapi import Client
 
+cl = Client()
 try:
     import login_save
     username = login_save.username
