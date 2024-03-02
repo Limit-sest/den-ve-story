@@ -11,8 +11,7 @@ import requests
 from datetime import datetime
 from time import sleep
 from pytz import timezone
-from instauto.api.client import ApiClient
-import instauto.helpers.post as post
+from instagrapi import Client as cl
 
 try:
     import login_save
@@ -35,8 +34,7 @@ except:
 
 if config.skip_ig != True:
     try:
-        client = ApiClient(username=username, password=password)
-        client.log_in()
+        cl.login(username, password)
     except Exception as e:
         print(f"Couldn't log in: {e}")
     else:
@@ -177,7 +175,7 @@ def img_save_post():
     if config.skip_ig != True:
         try:
             if config.random_delay: sleep(randint(config.random_delay_range[0], config.random_delay_range[1]))
-            post.upload_image_to_story(client, "current_img.jpg")
+            cl.photo_upload_to_story("current_img.jpg")
         except Exception as e:
             print(f"Couldn't upload story: {e}")
         else:
