@@ -41,20 +41,23 @@ except:
 
 if config.skip_ig != True:
     try:
-        if sessionID:
+        if sessionID and config.use_session_id:
             print("Trying to log in using sessionID")
             if cl.login_by_sessionid(sessionID):
-                print(f"Logged in as {username}")
+                print(f"Logged in as {cl.username}")
             else:
                 print(f"Couldn't log in (using sessionID): Unknown")
         else:
-            raise Exception("No sessionID provided.")
+            if config.use_session_id:
+                raise Exception("No sessionID provided.")
+            else:
+                raise Exception("SessionID login disabled in config.")
     except Exception as e:
         print(f"Couldn't log in (using sessionID): {e}")
         try:
             print("Trying to log in using username & password")
             if cl.login(username, password):
-                print(f"Logged in as {username}")
+                print(f"Logged in as {cl.username}")
             else:
                 print(f"Couldn't log in (using username & password): Unknown")
         except Exception as e:
